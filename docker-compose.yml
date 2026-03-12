@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  sapi-tts:
+    build: .
+    container_name: sapi-tts
+    restart: unless-stopped
+    ports:
+      - "8080:80"    # PHP JSON API
+      - "6080:6080"  # noVNC browser desktop
+    volumes:
+      # Persist generated TTS files between container restarts.
+      - tts_files:/tts
+      # Persist the Wine prefix so installed voices survive restarts.
+      - wine_prefix:/root/.wine
+    environment:
+      # Override API keys here (comma-separated) or leave to use defaults in
+      # config/api_keys.php.
+      API_KEYS: "${API_KEYS:-changeme-api-key-1,changeme-api-key-2}"
+      SCREEN_WIDTH: "1280"
+      SCREEN_HEIGHT: "800"
+      SCREEN_DEPTH: "24"
+      NOVNC_PORT: "6080"
+    shm_size: "256mb"  # Wine / Xvfb benefit from a larger /dev/shm
+
+volumes:
+  tts_files:
+  wine_prefix:
