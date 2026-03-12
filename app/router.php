@@ -34,6 +34,13 @@ function dispatch(array $validKeys): void
         return;
     }
 
+    // ------------------------------------------------------------------ GET /voices
+    if ($method === 'GET' && $path === '/voices') {
+        requireAuth($validKeys);
+        handleVoicesRequest();
+        return;
+    }
+
     // ------------------------------------------------------------------ GET /health
     if ($method === 'GET' && $path === '/health') {
         echo json_encode(['status' => 'ok']);

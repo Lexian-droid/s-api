@@ -9,7 +9,7 @@
  */
 
 define('TTS_DIR', '/tts');
-define('MAX_AGE_SECONDS', 86400); // 24 hours
+define('MAX_AGE_SECONDS', 600); // 10 minutes
 
 /**
  * Remove TTS audio files that are older than MAX_AGE_SECONDS.
@@ -37,10 +37,10 @@ function cleanupOldFiles(): void
 
         $age = $now - filemtime($file);
         if ($age > MAX_AGE_SECONDS) {
-        // Attempt to remove; log a warning on failure but do not abort the loop.
-    if (!@unlink($file)) {
-        error_log('[tts-cleanup] Failed to delete: ' . $file);
-    }
+            // Attempt to remove; log a warning on failure but do not abort the loop.
+            if (!@unlink($file)) {
+                error_log('[tts-cleanup] Failed to delete: ' . $file);
+            }
         }
     }
 }

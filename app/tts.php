@@ -110,3 +110,32 @@ function generateUUID(): string
     // Split the 32 hex chars into eight 4-char groups and format as UUID.
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
+
+function handleVoicesRequest(): void
+{
+    $vbs = <<<'VBS'
+On Error Resume Next
+Dim sapi
+Set sapi = CreateObject("SAPI.SpVoice")
+Dim voices
+Set voices = sapi.GetVoices()
+Dim v
+For Each v In voices
+    WScript.Echo v.GetDescription()
+Next
+VBS;
+    $tmpFile = tempnam(sys_get_temp_dir(), 'voices_') . '.vbs';
+    file_put_contents($tmpFile, $vbs);
+
+    $winPath = linuxPathToWine($tmpFile);
+    $cmd = sprintf(
+        'DISPLAY=:1 WINEPREFIX=/var/www/.wine HOME=/var/www XDG_CACHE_HOME=/var/www/.cache wine cscript.exe //NoLogo %s 2>/dev/null',
+        escapeshellarg($winPath)
+    );
+
+    exec($cmd, $lines, $exitCode);
+    @unlink($tmpFile);
+
+    $voices = array_values(array_filter(array_map('trim', $lines)));
+    echo json_encode(['success' => true, 'voices' => $voices]);
+}

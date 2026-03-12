@@ -177,6 +177,34 @@ curl -X POST http://localhost:8080/tts \
 
 ---
 
+### `GET /voices`
+
+List all SAPI5 voices currently installed in the Wine prefix.
+
+**Request headers**
+
+```
+Authorization: Bearer <API_KEY>
+```
+
+**Example request**
+
+```bash
+curl http://localhost:8080/voices \
+     -H "Authorization: Bearer changeme-api-key-1"
+```
+
+**Response `200`**
+
+```json
+{
+  "success": true,
+  "voices": ["Cepstral David"]
+}
+```
+
+---
+
 ## API Key Authentication
 
 All requests to `/tts` must carry a valid bearer token:
