@@ -27,8 +27,12 @@ for i in $(seq 1 20); do
 done
 
 echo "[entrypoint] Starting Xfce4 desktop …"
-XAUTHORITY=/dev/null startxfce4 &
-sleep 3
+if [ "${ENABLE_VNC:-true}" = "true" ]; then
+    XAUTHORITY=/dev/null startxfce4 &
+    sleep 3
+else
+    echo "[entrypoint] VNC disabled (ENABLE_VNC=false), skipping Xfce4."
+fi
 
 echo "[entrypoint] Starting wineserver as www-data …"
 gosu www-data env HOME=/var/www XDG_CACHE_HOME=/var/www/.cache \
@@ -66,15 +70,18 @@ cp /tmp/tts.vbs "${WINE_C}/tts/tts.vbs"
 chown -R www-data:www-data "${WINE_C}/tts"
 echo "[entrypoint] tts.vbs installed at ${WINE_C}/tts/tts.vbs"
 
-# ── 3. Start x11vnc (VNC server on port 5900) ─────────────────────────────────
-echo "[entrypoint] Starting x11vnc …"
-x11vnc -display "$DISPLAY" -nopw -forever -shared -bg -rfbport 5900 -quiet || \
-    echo "[entrypoint] WARNING: x11vnc failed to start (VNC will be unavailable)"
+# ── 3. Start VNC stack (only when ENABLE_VNC=true) ────────────────────────────
+if [ "${ENABLE_VNC:-true}" = "true" ]; then
+    echo "[entrypoint] Starting x11vnc …"
+    x11vnc -display "$DISPLAY" -nopw -forever -shared -bg -rfbport 5900 -quiet || \
+        echo "[entrypoint] WARNING: x11vnc failed to start (VNC will be unavailable)"
 
-# ── 4. Start noVNC (websocket proxy on NOVNC_PORT) ───────────────────────────
-NOVNC_PORT="${NOVNC_PORT:-6080}"
-echo "[entrypoint] Starting noVNC on port $NOVNC_PORT …"
-websockify --web /usr/share/novnc/ "$NOVNC_PORT" localhost:5900 &
+    NOVNC_PORT="${NOVNC_PORT:-6080}"
+    echo "[entrypoint] Starting noVNC on port $NOVNC_PORT …"
+    websockify --web /usr/share/novnc/ "$NOVNC_PORT" localhost:5900 &
+else
+    echo "[entrypoint] VNC disabled (ENABLE_VNC=false), skipping x11vnc and noVNC."
+fi
 
 # ── 5. Start cron ─────────────────────────────────────────────────────────────
 echo "[entrypoint] Starting cron …"

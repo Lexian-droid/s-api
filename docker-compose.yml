@@ -21,6 +21,8 @@ services:
       SCREEN_HEIGHT: "800"
       SCREEN_DEPTH: "24"
       NOVNC_PORT: "6080"
+      # Set to "false" to disable Xfce, x11vnc, and noVNC (production mode).
+      ENABLE_VNC: "${ENABLE_VNC:-true}"
     shm_size: "256mb" # Wine / Xvfb benefit from a larger /dev/shm
     security_opt:
       - seccomp:unconfined # Required for Wine shared memory mapping (c0000018)

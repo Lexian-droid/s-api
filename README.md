@@ -246,15 +246,16 @@ Environment variables take precedence over the config file.
 
 ## Configuration
 
-| Environment Variable | Default                  | Description                            |
-| -------------------- | ------------------------ | -------------------------------------- |
-| `API_KEYS`           | `changeme-api-key-1,...` | Comma-separated list of valid API keys |
-| `SCREEN_WIDTH`       | `1280`                   | noVNC desktop width                    |
-| `SCREEN_HEIGHT`      | `800`                    | noVNC desktop height                   |
-| `SCREEN_DEPTH`       | `24`                     | noVNC colour depth                     |
-| `NOVNC_PORT`         | `6080`                   | Port noVNC listens on inside container |
-| `WINEPREFIX`         | `/root/.wine`            | Wine prefix directory                  |
-| `WINEARCH`           | `win32`                  | Wine architecture                      |
+| Environment Variable | Default                  | Description                                                    |
+| -------------------- | ------------------------ | -------------------------------------------------------------- |
+| `API_KEYS`           | `changeme-api-key-1,...` | Comma-separated list of valid API keys                         |
+| `ENABLE_VNC`         | `true`                   | Set to `false` to disable Xfce, x11vnc, and noVNC (production) |
+| `SCREEN_WIDTH`       | `1280`                   | noVNC desktop width                                            |
+| `SCREEN_HEIGHT`      | `800`                    | noVNC desktop height                                           |
+| `SCREEN_DEPTH`       | `24`                     | noVNC colour depth                                             |
+| `NOVNC_PORT`         | `6080`                   | Port noVNC listens on inside container                         |
+| `WINEPREFIX`         | `/var/www/.wine`         | Wine prefix directory                                          |
+| `WINEARCH`           | `win32`                  | Wine architecture                                              |
 
 ---
 
