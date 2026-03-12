@@ -51,7 +51,7 @@ function generateTTS(string $text, string $voice, string $format = 'wav'): array
     // All arguments are escaped to prevent shell injection.
     $winOutputPath = linuxPathToWine($outputPath);
     $cmd = sprintf(
-        'DISPLAY=:1 wine cscript.exe //NoLogo %s /voice:%s /text:%s /output:%s 2>&1',
+        'DISPLAY=:1 WINEPREFIX=/var/www/.wine HOME=/var/www XDG_CACHE_HOME=/var/www/.cache wine cscript.exe //NoLogo %s /voice:%s /text:%s /output:%s 2>&1',
         escapeshellarg(TTS_VBS),
         escapeshellarg($voice),
         escapeshellarg($text),
@@ -72,7 +72,7 @@ function generateTTS(string $text, string $voice, string $format = 'wav'): array
         return ['success' => false, 'error' => 'TTS executable did not produce an output file.'];
     }
 
-    return ['success' => true, 'file' => '/tts/' . $filename];
+    return ['success' => true, 'file' => '/audio/' . $filename];
 }
 
 /**

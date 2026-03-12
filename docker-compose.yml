@@ -1,18 +1,18 @@
-version: "3.9"
-
 services:
   sapi-tts:
     build: .
     container_name: sapi-tts
     restart: unless-stopped
     ports:
-      - "8080:80"    # PHP JSON API
-      - "6080:6080"  # noVNC browser desktop
+      - "8080:80" # PHP JSON API
+      - "6080:6080" # noVNC browser desktop
     volumes:
       # Persist generated TTS files between container restarts.
       - tts_files:/tts
       # Persist the Wine prefix so installed voices survive restarts.
-      - wine_prefix:/root/.wine
+      - wine_prefix:/var/www/.wine
+      # Bind mount: drop files into ./files on the host to access them at /files in the container.
+      - ./files:/files
     environment:
       # Override API keys here (comma-separated) or leave to use defaults in
       # config/api_keys.php.
@@ -21,8 +21,9 @@ services:
       SCREEN_HEIGHT: "800"
       SCREEN_DEPTH: "24"
       NOVNC_PORT: "6080"
-    shm_size: "256mb"  # Wine / Xvfb benefit from a larger /dev/shm
-
+    shm_size: "256mb" # Wine / Xvfb benefit from a larger /dev/shm
+    security_opt:
+      - seccomp:unconfined # Required for Wine shared memory mapping (c0000018)
 volumes:
   tts_files:
   wine_prefix:

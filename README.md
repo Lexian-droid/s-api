@@ -30,8 +30,8 @@ Browser / Client
        └─ HTTP :6080  ──►  noVNC (websockify)  ──►  x11vnc ──►  Xfce4 / Xvfb
 ```
 
-* **Port 8080** — JSON REST API for TTS generation.
-* **Port 6080** — Browser-based Xfce desktop for installing Windows SAPI5 voices.
+- **Port 8080** — JSON REST API for TTS generation.
+- **Port 6080** — Browser-based Xfce desktop for installing Windows SAPI5 voices.
 
 ---
 
@@ -65,7 +65,7 @@ README.md
 
 ### Prerequisites
 
-* Docker ≥ 20.x and Docker Compose ≥ 2.x
+- Docker ≥ 20.x and Docker Compose ≥ 2.x
 
 ### 1. Clone and configure
 
@@ -143,11 +143,11 @@ Authorization: Bearer <API_KEY>
 
 **Request body**
 
-| Field    | Type   | Required | Description                                       |
-|----------|--------|----------|---------------------------------------------------|
-| `text`   | string | ✓        | The text to synthesise.                           |
-| `voice`  | string | ✓        | SAPI5 voice name (partial match supported).       |
-| `format` | string |          | Output format: `wav` (default) or `mp3`.          |
+| Field    | Type   | Required | Description                                 |
+| -------- | ------ | -------- | ------------------------------------------- |
+| `text`   | string | ✓        | The text to synthesise.                     |
+| `voice`  | string | ✓        | SAPI5 voice name (partial match supported). |
+| `format` | string |          | Output format: `wav` (default) or `mp3`.    |
 
 **Example request**
 
@@ -170,7 +170,7 @@ curl -X POST http://localhost:8080/tts \
 **Error responses**
 
 | Code | Meaning                                  |
-|------|------------------------------------------|
+| ---- | ---------------------------------------- |
 | 400  | Missing / invalid request fields         |
 | 401  | Missing or invalid `Authorization` token |
 | 500  | TTS generation failed (Wine error)       |
@@ -205,28 +205,28 @@ Environment variables take precedence over the config file.
 
 ## File Storage & Cleanup
 
-* Generated files are stored in `/tts/` with UUID filenames
+- Generated files are stored in `/tts/` with UUID filenames
   (e.g., `550e8400-e29b-41d4-a716-446655440000.wav`).
-* Files older than **24 hours** are deleted automatically by a cron job that
+- Files older than **24 hours** are deleted automatically by a cron job that
   runs every hour inside the container (`/etc/cron.d/tts-cleanup`).
-* Cleanup also runs on every API request (lightweight, skips when nothing to
+- Cleanup also runs on every API request (lightweight, skips when nothing to
   delete).
-* The `/tts` directory is backed by the `tts_files` Docker volume so files
+- The `/tts` directory is backed by the `tts_files` Docker volume so files
   persist between container restarts until they age out.
 
 ---
 
 ## Configuration
 
-| Environment Variable | Default                              | Description                            |
-|----------------------|--------------------------------------|----------------------------------------|
-| `API_KEYS`           | `changeme-api-key-1,...`             | Comma-separated list of valid API keys |
-| `SCREEN_WIDTH`       | `1280`                               | noVNC desktop width                    |
-| `SCREEN_HEIGHT`      | `800`                                | noVNC desktop height                   |
-| `SCREEN_DEPTH`       | `24`                                 | noVNC colour depth                     |
-| `NOVNC_PORT`         | `6080`                               | Port noVNC listens on inside container |
-| `WINEPREFIX`         | `/root/.wine`                        | Wine prefix directory                  |
-| `WINEARCH`           | `win64`                              | Wine architecture                      |
+| Environment Variable | Default                  | Description                            |
+| -------------------- | ------------------------ | -------------------------------------- |
+| `API_KEYS`           | `changeme-api-key-1,...` | Comma-separated list of valid API keys |
+| `SCREEN_WIDTH`       | `1280`                   | noVNC desktop width                    |
+| `SCREEN_HEIGHT`      | `800`                    | noVNC desktop height                   |
+| `SCREEN_DEPTH`       | `24`                     | noVNC colour depth                     |
+| `NOVNC_PORT`         | `6080`                   | Port noVNC listens on inside container |
+| `WINEPREFIX`         | `/root/.wine`            | Wine prefix directory                  |
+| `WINEARCH`           | `win32`                  | Wine architecture                      |
 
 ---
 
@@ -256,4 +256,3 @@ View Apache logs:
 ```bash
 docker compose logs -f sapi-tts
 ```
-

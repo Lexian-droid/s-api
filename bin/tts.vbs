@@ -32,15 +32,15 @@ End If
 
 ' Create SAPI SpVoice object.
 Dim sapi
-sapi = CreateObject("SAPI.SpVoice")
+Set sapi = CreateObject("SAPI.SpVoice")
 
 ' Select the requested voice.
 Dim voices, v, matched
-voices = sapi.GetVoices()
+Set voices = sapi.GetVoices()
 matched = False
 For Each v In voices
     If InStr(1, v.GetDescription(), voice, vbTextCompare) > 0 Then
-        sapi.Voice = v
+        Set sapi.Voice = v
         matched = True
         Exit For
     End If
@@ -53,10 +53,10 @@ End If
 
 ' Create a file stream and write audio to it.
 Dim stream
-stream = CreateObject("SAPI.SpFileStream")
+Set stream = CreateObject("SAPI.SpFileStream")
 stream.Open output, 3, False  ' SSFMCreateForWrite = 3
 
-sapi.AudioOutputStream = stream
+Set sapi.AudioOutputStream = stream
 sapi.Speak text, 0
 
 stream.Close

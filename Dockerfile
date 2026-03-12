@@ -6,8 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     SCREEN_WIDTH=1280 \
     SCREEN_HEIGHT=800 \
     SCREEN_DEPTH=24 \
-    WINEPREFIX=/root/.wine \
-    WINEARCH=win64 \
+    WINEPREFIX=/var/www/.wine \
+    WINEARCH=win32 \
     NOVNC_PORT=6080
 
 # ── System packages ───────────────────────────────────────────────────────────
@@ -24,10 +24,10 @@ RUN dpkg --add-architecture i386 && \
         wine \
         wine32 \
         wine64 \
-        winetricks \
-        # Xfce desktop (lightweight)
+        # Xfce desktop (lightweight) + D-Bus (required by xfce4-session)
         xfce4 \
         xfce4-terminal \
+        dbus-x11 \
         # Virtual framebuffer + VNC
         xvfb \
         x11vnc \
@@ -41,6 +41,11 @@ RUN dpkg --add-architecture i386 && \
         cron \
         gosu \
     && rm -rf /var/lib/apt/lists/*
+
+# ── winetricks (not in Debian bookworm repos; install from upstream) ──────────
+RUN curl -fsSL https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks \
+        -o /usr/local/bin/winetricks && \
+    chmod +x /usr/local/bin/winetricks
 
 # ── Apache configuration ───────────────────────────────────────────────────────
 # Enable mod_rewrite and configure the VirtualHost.
@@ -75,7 +80,7 @@ COPY docker/cleanup_cron.php /app/cleanup_cron.php
 
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 EXPOSE 80 6080
 
